@@ -11,8 +11,12 @@ const webpack = require('webpack');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const AddAssetHtmlPlugin = require('add-asset-html-webpack-plugin');
 const HtmlWebpackTagsPlugin = require('html-webpack-tags-plugin');
+const HtmlWebpackExternalsPlugin = require('html-webpack-externals-plugin')
+const PurgecssPlugin = require('purgecss-webpack-plugin')
 
 const smp = new SpeedMeasureWebpackPlugin();
+
+const SRC = path.join(__dirname, 'src');
 
 const setMulEntry = () => {
   const entry = {};
@@ -29,7 +33,7 @@ const setMulEntry = () => {
     htmlWebpackPlugins.push(new HtmlWebpackPlugin({
       template: path.join(__dirname, `src/${fileName}/index.html`),
       filename: `${fileName}.html`,
-      chunks: [fileName],
+      chunks: ['vendors', 'commons', fileName],
       inject: true,
       minify: {
         html5: true,
@@ -63,9 +67,10 @@ module.exports = smp.wrap({
   output: {
     path: path.join(__dirname, 'dist'),
     filename: '[name]_[chunkhash:8].js',
-    publicPath:'./'
+    publicPath: './'
   },
-  mode: 'production',
+  mode: 'development',
+  devtool: 'none',
   resolve: {
     modules: [path.resolve(__dirname, 'node_modules')], //减少模块搜索的层级，默认请客下会一层层去node_modules中查找
     extensions: ['.js'], //准确匹配文件后缀，确保没有后缀的模块是js文件
@@ -101,6 +106,41 @@ module.exports = smp.wrap({
           'css-loader',
           'postcss-loader'
         ]
+      },
+      {
+        test: /\.(gif|png|jpe?g|svg)$/,
+        use: [
+          {
+            loader:'file-loader',
+            options:{
+              name:'[name]_[hash:8].[ext]'
+            }
+          },
+          {
+            loader: 'image-webpack-loader',
+            options: {
+              mozjpeg: {
+                progressive: true,
+                quality: 65
+              },
+              // optipng.enabled: false will disable optipng
+              optipng: {
+                enabled: false,
+              },
+              pngquant: {
+                quality: [0.65, 0.90],
+                speed: 4
+              },
+              gifsicle: {
+                interlaced: false,
+              },
+              // the webp option will enable WEBP
+              webp: {
+                quality: 75
+              }
+            }
+          }
+        ]
       }
     ]
   },
@@ -114,19 +154,45 @@ module.exports = smp.wrap({
     //   threads:4
     // })
     new HardSourceWebpackPlugin(),
-    new webpack.DllReferencePlugin({
-      manifest: require('./build/dll/library.json')
-    }),
-    // new BundleAnalyzerPlugin()
+    // new webpack.DllReferencePlugin({
+    //   manifest: require('./build/dll/library.json')
+    // }),
+    new BundleAnalyzerPlugin(),
+    // new webpack.optimize.ModuleConcatenationPlugin()
+    // new HtmlWebpackExternalsPlugin({
+    //   externals:[
+    //     {
+    //       module:'react',
+    //       entry:'https://unpkg.com/react@16/umd/react.production.min.js',
+    //       global:'React'
+    //     },
+    //     {
+    //       module:'react-dom',
+    //       entry:'https://unpkg.com/react-dom@16/umd/react-dom.production.min.js',
+    //       global:'ReactDOM'
+    //     }
+    //   ]
+    // })
+    new PurgecssPlugin({
+      paths: glob.sync(`${SRC}/**/*`, { nodir: true })
+    })
   ].concat(htmlWebpackPlugins),
-  optimization: {
-    minimize: true,
-    minimizer: [
-      new TerserPlugin({
-        cache: true,
-        extractComments: false,
-        // parallel:3
-      })
-    ]
-  }
+  // optimization: {
+  //   splitChunks: {
+  //     cacheGroups: {
+  //       vendors: {
+  //         test: /(react|react-dom)/,
+  //         name: 'vendors',
+  //         chunks: 'all',
+  //         priority: 1
+  //       },
+  //       commons: {
+  //         name: 'commons',
+  //         minSize: 0,
+  //         minChunks: 2,
+  //         chunks: 'all'
+  //       }
+  //     }
+  //   }
+  // }
 });
