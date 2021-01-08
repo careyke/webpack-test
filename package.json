@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack --config webpack.config.prod.js",
-    "dll": "webpack --config webpack.config.dll.js"
+    "dll": "webpack --config webpack.config.dll.js",
+    "test-umd": "webpack --config webpack.cli.config.js"
   },
   "repository": {
     "type": "git",
