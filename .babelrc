@@ -2,7 +2,7 @@
   "presets": [
       ["@babel/env",{
         // "modules":"commonjs"
-        "useBuiltIns":"usage"
+        // "useBuiltIns":"usage"
       }],
       "@babel/react"
   ],

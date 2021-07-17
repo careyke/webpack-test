@@ -1,13 +1,20 @@
-import React from 'react';
+import React,{useState} from 'react';
 import ReactDOM from 'react-dom';
-import _ from 'lodash';
 
 function App() {
-  const text = _.add(99, 1);
+  const [asyncModule, setAsyncModule] = useState(null);
+  if(!asyncModule){
+    import('./import').then((module)=>{
+      setAsyncModule(module);
+    }).catch((err)=>{
+      console.log(err);
+    })
+  }
+
   return (
     <div>
       <div>list page</div>
-      <div>{text}</div>
+      <div>{asyncModule?asyncModule.add(1,2):0}</div>
     </div>
   );
 }

@@ -157,22 +157,22 @@ module.exports = smp.wrap({
     // new webpack.DllReferencePlugin({
     //   manifest: require('./build/dll/library.json')
     // }),
-    new BundleAnalyzerPlugin(),
+    // new BundleAnalyzerPlugin(),
     // new webpack.optimize.ModuleConcatenationPlugin()
-    // new HtmlWebpackExternalsPlugin({
-    //   externals:[
-    //     {
-    //       module:'react',
-    //       entry:'https://unpkg.com/react@16/umd/react.production.min.js',
-    //       global:'React'
-    //     },
-    //     {
-    //       module:'react-dom',
-    //       entry:'https://unpkg.com/react-dom@16/umd/react-dom.production.min.js',
-    //       global:'ReactDOM'
-    //     }
-    //   ]
-    // })
+    new HtmlWebpackExternalsPlugin({
+      externals:[
+        {
+          module:'react',
+          entry:'https://unpkg.com/react@16/umd/react.production.min.js',
+          global:'React'
+        },
+        {
+          module:'react-dom',
+          entry:'https://unpkg.com/react-dom@16/umd/react-dom.production.min.js',
+          global:'ReactDOM'
+        }
+      ]
+    }),
     new PurgecssPlugin({
       paths: glob.sync(`${SRC}/**/*`, { nodir: true })
     })
