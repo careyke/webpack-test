@@ -195,4 +195,7 @@ module.exports = smp.wrap({
   //     }
   //   }
   // }
+  optimization:{
+    usedExports:true
+  }
 });

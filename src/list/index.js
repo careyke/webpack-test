@@ -16,6 +16,7 @@
 
 // ReactDOM.render(<App />, document.querySelector('#app'));
 import Dog from './dog';
+import {add} from './utils'
 
 class Cat{
   constructor(name){
@@ -24,5 +25,6 @@ class Cat{
   }
   say(){
     console.log('miao');
+    add()
   }
 }
