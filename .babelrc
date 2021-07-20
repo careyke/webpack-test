@@ -4,6 +4,8 @@
         // "modules":"commonjs"
         // "useBuiltIns":"usage"
         // "modules": false
+        "useBuiltIns": "entry",
+        "corejs": 2
       }],
       "@babel/react"
   ],
